@@ -37,6 +37,8 @@ public class UserController {
 		
 		String path=filePathService.storeFile(file);
 		
+		System.out.println("System");
+		
 		
 		System.out.println(path);
 		
