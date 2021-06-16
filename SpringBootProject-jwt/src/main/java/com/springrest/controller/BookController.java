@@ -2,6 +2,8 @@ package com.springrest.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +28,7 @@ public class BookController {
 	private BookService bookService;
 	
 	@PostMapping()
-	public Book add(@RequestBody Book book) {
+	public Book add(@Valid @RequestBody Book book) {
 		return bookService.saveBook(book) ;
 	}
 	

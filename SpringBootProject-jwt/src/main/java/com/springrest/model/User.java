@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -18,18 +20,20 @@ public class User {
 	@Id
 	@GeneratedValue
 	private Integer id;
-	@Column(unique = true)
+	@Column(unique = true,nullable = false)
+	@NotEmpty(message = "username is required")
+	@Size(min = 3,message = "username should have at least 3 characters")
 	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;
-	@Column(unique = true)
+	//@Column(unique = true)
 	private String email;
-	@Column(unique = true)
+	//@Column(unique = true)
 	private Long phoneNo;
 	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-	@JoinColumn(name = "file_path")
+	@JoinColumn(name = "image_path")
 	private ProfileImage image;
 	
 	
