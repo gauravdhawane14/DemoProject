@@ -38,7 +38,7 @@ public class UserController {
 		String path=filePathService.storeFile(file);
 		
 		
-		System.out.println(path);
+
 		
 		ProfileImage imagePath=new ProfileImage();
 		imagePath.setPath(path);
