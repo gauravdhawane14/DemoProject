@@ -16,16 +16,10 @@ public class Book {
 	@Id
 	@GeneratedValue
 	private Integer id;
-	@NotEmpty(message = "username is required")
+	@NotEmpty(message = "Book name is required")
 	private String name;
 	private String author;
-	
-//	@ManyToOne
-//	@JoinColumn(name="author_id")
-//	private Author author;
-	
-	
-	
+
 
 	public Integer getId() {
 		return id;
@@ -51,14 +45,6 @@ public class Book {
 		this.author = author;
 	}
 
-//	public Author getAuthor() {
-//		return author;
-//	}
-//
-//	public void setAuthor(Author author) {
-//		this.author = author;
-//	}
-	
 	
 	
 }

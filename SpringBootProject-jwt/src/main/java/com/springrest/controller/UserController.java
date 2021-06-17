@@ -39,11 +39,9 @@ public class UserController {
 
 
 	@PostMapping()
-	public ResponseEntity<User> add(@RequestParam("file") MultipartFile file,@RequestParam User user) {
+	public ResponseEntity<User> add(@RequestParam("file") MultipartFile file,@Valid @RequestParam User user) {
 
 		String path=filePathService.storeFile(file);
-
-		System.out.println(path);
 
 		ProfileImage imagePath=new ProfileImage();
 		imagePath.setPath(path);
@@ -52,7 +50,7 @@ public class UserController {
 		imagePath.setContentType(contentType);
 
 		user.setImage(imagePath);
-
+		
 		User saveUser=userService.saveUser(user);
 
 		return new ResponseEntity<User>(saveUser,HttpStatus.CREATED);
@@ -90,9 +88,9 @@ public class UserController {
 	@PutMapping(path="/{id}")
 	public User editUserById(@PathVariable Integer id,@RequestParam("file") MultipartFile file,@RequestParam User user) {
 
-		User user1=userService.getUserById(id);
+		User userRefId=userService.getUserById(id);
 
-		ProfileImage filePath=user1.getImage();
+		ProfileImage filePath=userRefId.getImage();
 
 		String deleteFile=filePath.getPath();
 
