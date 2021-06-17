@@ -16,9 +16,7 @@ import com.springrest.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer>{
-	
-	//public Optional<User> findByUserName(String userName);
-	
+		
 	User findByUsername(String username);
 	
 	@Query("select u from User u where u.username like %?1%")

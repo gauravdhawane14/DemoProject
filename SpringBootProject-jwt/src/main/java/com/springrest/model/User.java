@@ -20,29 +20,23 @@ public class User {
 	@Id
 	@GeneratedValue
 	private Integer id;
-	@Column(unique = true,nullable = false)
-	@NotEmpty(message = "username is required")
-	@Size(min = 3,message = "username should have at least 3 characters")
+	@Column(unique = true)
 	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;
-	//@Column(unique = true)
 	private String email;
-	//@Column(unique = true)
 	private Long phoneNo;
-	
+
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name = "image_path")
 	private ProfileImage image;
-	
-	
-	
+
+
+
 	public User() {
-			}
-	
-	
-	
+	}
+
 	public User(Integer id, String username, String password, String firstName, String lastName, String email,
 			Long phoneNo, ProfileImage image) {
 		super();
@@ -56,20 +50,13 @@ public class User {
 		this.image = image;
 	}
 
-
-
-
 	public ProfileImage getImage() {
 		return image;
 	}
 
-
-
 	public void setImage(ProfileImage image) {
 		this.image = image;
 	}
-
-
 
 	public Integer getId() {
 		return id;
@@ -113,7 +100,7 @@ public class User {
 	public void setPhoneNo(Long phoneNo) {
 		this.phoneNo = phoneNo;
 	}
-	
-	
-	
+
+
+
 }

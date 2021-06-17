@@ -39,7 +39,11 @@ public class UserController {
 
 
 	@PostMapping()
-	public ResponseEntity<User> add(@RequestParam("file") MultipartFile file,@Valid @RequestParam User user) {
+	public ResponseEntity<User> add(@RequestParam("file") MultipartFile file,@RequestParam User user) {
+
+		if(user.getUsername()==null) {
+			throw new RuntimeException("username is required");
+		}
 
 		String path=filePathService.storeFile(file);
 
@@ -50,7 +54,7 @@ public class UserController {
 		imagePath.setContentType(contentType);
 
 		user.setImage(imagePath);
-		
+
 		User saveUser=userService.saveUser(user);
 
 		return new ResponseEntity<User>(saveUser,HttpStatus.CREATED);
