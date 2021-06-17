@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,6 +16,7 @@ public class Book {
 	@Id
 	@GeneratedValue
 	private Integer id;
+	@NotEmpty(message = "username is required")
 	private String name;
 	private String author;
 	
