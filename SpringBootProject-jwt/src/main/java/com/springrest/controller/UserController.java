@@ -1,9 +1,7 @@
 package com.springrest.controller;
 
-import java.io.IOException;
 import java.util.List;
 
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springrest.model.ProfileImage;
 import com.springrest.model.User;
 import com.springrest.service.FilePathService;
@@ -37,30 +34,35 @@ public class UserController {
 	@Autowired
 	private FilePathService filePathService;
 
+	@Autowired
+	private ValidationHandler validation;
 
 	@PostMapping()
-	public ResponseEntity<User> add(@RequestParam("file") MultipartFile file,@RequestParam User user) {
+	public ResponseEntity<Object> add(@RequestParam("file") MultipartFile file,@RequestParam User user) {
 
-		if(user.getUsername()==null) {
-			throw new RuntimeException("username is required");
+		ResponseEntity<Object> entity=null;
+
+		if(user.getUsername()!=null) {
+			String path=filePathService.storeFile(file);
+
+			ProfileImage imagePath=new ProfileImage();
+			imagePath.setPath(path);
+
+			String contentType=file.getContentType();
+			imagePath.setContentType(contentType);
+
+			user.setImage(imagePath);
+
+			User saveUser=userService.saveUser(user);
+
+			entity=new ResponseEntity<Object>(saveUser,HttpStatus.CREATED);
+		}
+		else {
+			entity=validation.handleException("username is required");
 		}
 
-		String path=filePathService.storeFile(file);
-
-		ProfileImage imagePath=new ProfileImage();
-		imagePath.setPath(path);
-
-		String contentType=file.getContentType();
-		imagePath.setContentType(contentType);
-
-		user.setImage(imagePath);
-
-		User saveUser=userService.saveUser(user);
-
-		return new ResponseEntity<User>(saveUser,HttpStatus.CREATED);
-
+		return entity;
 	}
-
 
 	@GetMapping()
 	public List<User> get(){
@@ -68,48 +70,69 @@ public class UserController {
 	}
 
 	@GetMapping(path="/{id}")
-	public User getById(@PathVariable Integer id) {
-		return userService.getUserById(id);
+	public ResponseEntity<Object> getById(@PathVariable Integer id) {
+
+		User user=userService.getUserById(id);
+		ResponseEntity<Object> entity=validation.handleException("user not found");
+
+		return entity;
 	}
-
-
-	//delete 
 
 	@DeleteMapping(path="/{id}")
 	public String delete(@PathVariable Integer id) {
+		try {
+			User user=userService.getUserById(id);
 
-		User user=userService.getUserById(id);
+			ProfileImage filePath=user.getImage();
 
-		ProfileImage filePath=user.getImage();
+			String file=filePath.getPath();
 
-		String file=filePath.getPath();
+			filePathService.deleteFile(file);
 
-		filePathService.deleteFile(file);
-
-		return userService.removeUserById(id);
+			return userService.removeUserById(id);
+		}
+		catch(Exception e) {
+			return "User not found to delete";
+		}
 	}
 
 	@PutMapping(path="/{id}")
-	public User editUserById(@PathVariable Integer id,@RequestParam("file") MultipartFile file,@RequestParam User user) {
+	public ResponseEntity<Object> editUserById(@PathVariable Integer id,@RequestParam("file") MultipartFile file,@RequestParam User user) {
 
-		User userRefId=userService.getUserById(id);
+		ResponseEntity<Object> entity=null;
 
-		ProfileImage filePath=userRefId.getImage();
+		User userRefId=null;
+		try {
+			userRefId = userService.findUserById(id).get();
+		} catch (Exception e) {
 
-		String deleteFile=filePath.getPath();
+			if(userRefId!=null) {
 
-		filePathService.deleteFile(deleteFile);
+				ProfileImage filePath=userRefId.getImage();
 
-		String path=filePathService.storeFile(file);
+				String deleteFile=filePath.getPath();
 
-		String contentType=file.getContentType();
+				filePathService.deleteFile(deleteFile);
 
-		filePath.setPath(path);
-		filePath.setContentType(contentType);
+				String path=filePathService.storeFile(file);
 
-		user.setImage(filePath);
+				String contentType=file.getContentType();
 
-		return userService.updateUserById(id, user);
+				filePath.setPath(path);
+				filePath.setContentType(contentType);
+
+				user.setImage(filePath);
+
+				User saveUser=userService.updateUserById(id, user);
+
+				entity=new ResponseEntity<Object>(saveUser,HttpStatus.OK);
+			}
+			else {
+				entity=validation.handleException("user not found to update");
+			}
+		}
+
+		return entity;
 	}
 
 	@GetMapping(path="/pagination")
