@@ -22,6 +22,8 @@ public interface UserService {
 	public User getUserById(Integer id);
 
 	public Page<User> getPaginatedUser(String keyword,Integer pageNo, Integer pageSize);
+	
+	public Optional<User> findUserById(Integer id) throws Exception;
 
    
 
