@@ -44,23 +44,17 @@ public class UserController {
 
 		if(user.getUsername()!=null) {
 			String path=filePathService.storeFile(file);
-
 			ProfileImage imagePath=new ProfileImage();
 			imagePath.setPath(path);
-
 			String contentType=file.getContentType();
 			imagePath.setContentType(contentType);
-
 			user.setImage(imagePath);
-
 			User saveUser=userService.saveUser(user);
-
 			entity=new ResponseEntity<Object>(saveUser,HttpStatus.CREATED);
 		}
 		else {
 			entity=validation.handleException("username is required");
 		}
-
 		return entity;
 	}
 
@@ -71,10 +65,8 @@ public class UserController {
 
 	@GetMapping(path="/{id}")
 	public ResponseEntity<Object> getById(@PathVariable Integer id) {
-
 		User user=userService.getUserById(id);
 		ResponseEntity<Object> entity=validation.handleException("user not found");
-
 		return entity;
 	}
 
@@ -82,13 +74,9 @@ public class UserController {
 	public String delete(@PathVariable Integer id) {
 		try {
 			User user=userService.getUserById(id);
-
 			ProfileImage filePath=user.getImage();
-
 			String file=filePath.getPath();
-
 			filePathService.deleteFile(file);
-
 			return userService.removeUserById(id);
 		}
 		catch(Exception e) {
@@ -107,31 +95,22 @@ public class UserController {
 		} catch (Exception e) {
 
 			if(userRefId!=null) {
-
 				ProfileImage filePath=userRefId.getImage();
-
 				String deleteFile=filePath.getPath();
-
 				filePathService.deleteFile(deleteFile);
-
 				String path=filePathService.storeFile(file);
-
 				String contentType=file.getContentType();
-
 				filePath.setPath(path);
 				filePath.setContentType(contentType);
-
 				user.setImage(filePath);
 
 				User saveUser=userService.updateUserById(id, user);
-
 				entity=new ResponseEntity<Object>(saveUser,HttpStatus.OK);
 			}
 			else {
 				entity=validation.handleException("user not found to update");
 			}
 		}
-
 		return entity;
 	}
 
